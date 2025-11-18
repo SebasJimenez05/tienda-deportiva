@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechStore - Tu Tienda de Tecnología</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --gold-primary: #d4af37;
+            --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f7ef8a 100%);
+            --gold-border: #b8941f;
+            --black-dark: #0a0a0a;
+            --black-light: #1a1a1a;
+        }
+        
+        .navbar-brand {
+            color: var(--gold-primary) !important;
+            font-weight: bold;
+        }
+        
+        .card {
+            border: 1px solid var(--gold-border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: rgba(26, 26, 26, 0.95);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+        }
+        
+        .producto-imagen {
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold-primary);
+            font-size: 3rem;
+        }
+        
+        .btn-primary {
+            background: var(--gold-gradient);
+            border: none;
+            color: var(--black-dark);
+            font-weight: 600;
+        }
+        
+        .btn-primary:hover {
+            background: var(--gold-gradient);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+        }
+        
+        .nav-pills .nav-link.active {
+            background: var(--gold-gradient) !important;
+            color: var(--black-dark) !important;
+            font-weight: 600;
+        }
+        
+        .nav-pills .nav-link {
+            color: var(--gold-primary);
+            border: 1px solid var(--gold-border);
+            margin: 0 5px;
+        }
+        
+        .badge-stock {
+            background: var(--gold-gradient);
+            color: var(--black-dark);
+        }
+        
+        .carrito-badge {
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body style="background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%); min-height: 100vh; color: #fff;">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-laptop-code me-2"></i>TechStore
+            </a>
+            
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/tienda}">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/change-password}">
+                            <i class="fas fa-key"></i> Cambiar Contraseña
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="navbar-nav">
+                    <a class="nav-link position-relative" th:href="@{/carrito}">
+                        <i class="fas fa-shopping-cart"></i> Carrito
+                        <span th:if="${#lists.size(carrito) > 0}" class="carrito-badge" th:text="${#lists.size(carrito)}"></span>
+                    </a>
+                    <a class="nav-link" th:href="@{/logout}">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Filtros de Categoría -->
+    <div class="container mt-4">
+        <div class="row mb-4">
+            <div class="col-12">
+                <ul class="nav nav-pills justify-content-center">
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${categoriaSeleccionada == 'todos'} ? 'active'" 
+                           th:href="@{/tienda}">Todos los Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${categoriaSeleccionada == 'mouses'} ? 'active'" 
+                           th:href="@{/tienda(categoria='mouses')}">🖱️ Mouses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${categoriaSeleccionada == 'teclados'} ? 'active'" 
+                           th:href="@{/tienda(categoria='teclados')}">⌨️ Teclados</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${categoriaSeleccionada == 'alfombrillas'} ? 'active'" 
+                           th:href="@{/tienda(categoria='alfombrillas')}">🖼️ Alfombrillas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:classappend="${categoriaSeleccionada == 'audifonos'} ? 'active'" 
+                           th:href="@{/tienda(categoria='audifonos')}">🎧 Audífonos</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Mensajes -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+            <i class="fas fa-check-circle"></i> 
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+            <i class="fas fa-exclamation-triangle"></i> 
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <!-- Productos -->
+        <div class="row">
+            <div th:each="producto : ${productos}" class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                <div class="card h-100 text-white">
+                    <div class="producto-imagen">
+                        <i class="fas fa-laptop"></i>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${producto.nombre}"></h5>
+                        <p class="card-text text-muted" th:text="${producto.descripcion}"></p>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="h4 text-warning" th:text="'$' + ${#numbers.formatDecimal(producto.precio, 1, 2, 'COMMA')}"></span>
+                            <span class="badge badge-stock" th:text="${producto.stock} + ' en stock'"></span>
+                        </div>
+                        <form th:action="@{/agregar-carrito}" method="post">
+                            <input type="hidden" name="productoId" th:value="${producto.id}">
+                            <div class="input-group mb-2">
+                                <input type="number" class="form-control" name="cantidad" value="1" min="1" 
+                                       th:max="${producto.stock}" style="background: #2c2c2c; color: white; border: 1px solid var(--gold-border);">
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-cart-plus me-2"></i> Agregar al Carrito
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mensaje si no hay productos -->
+        <div th:if="${#lists.isEmpty(productos)}" class="text-center py-5">
+            <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+            <h3 class="text-muted">No hay productos disponibles</h3>
+            <p class="text-muted">Intenta con otra categoría o vuelve más tarde.</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
