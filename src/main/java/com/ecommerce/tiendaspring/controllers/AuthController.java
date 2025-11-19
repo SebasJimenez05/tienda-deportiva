@@ -31,10 +31,7 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @GetMapping("/")
-    public String home() {
-        return "redirect:/login";
-    }
+    
 
     @GetMapping("/login")
     public String mostrarLogin() {
@@ -95,12 +92,6 @@ public class AuthController {
             return "register";
         }
     }
-
-    @GetMapping("/dashboard")
-    public String mostrarDashboard() {
-        return "dashboard";
-    }
-
 
     @GetMapping("/change-password")
     public String showChangePasswordForm(Model model) {

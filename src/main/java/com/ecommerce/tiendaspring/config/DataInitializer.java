@@ -54,11 +54,10 @@ public class DataInitializer implements CommandLineRunner {
             admin.setNombre("Administrador");
             admin.setEmail("admin@tienda.com");
             admin.setPassword(passwordEncoder.encode("admin123"));
-            
-            // Obtener roles desde la base de datos (managed entities)
+
             Rol rolAdmin = rolRepository.findByNombre("ROLE_ADMIN").orElseThrow();
             Rol rolUser = rolRepository.findByNombre("ROLE_USER").orElseThrow();
-            
+
             admin.setRoles(Arrays.asList(rolAdmin, rolUser));
             usuarioRepository.save(admin);
             System.out.println("Usuario admin creado: admin@tienda.com / admin123");
@@ -70,17 +69,19 @@ public class DataInitializer implements CommandLineRunner {
             user.setNombre("Usuario Normal");
             user.setEmail("user@tienda.com");
             user.setPassword(passwordEncoder.encode("user123"));
-            
+
             Rol rolUser = rolRepository.findByNombre("ROLE_USER").orElseThrow();
             user.setRoles(Collections.singletonList(rolUser));
-            
+
             usuarioRepository.save(user);
             System.out.println("Usuario normal creado: user@tienda.com / user123");
         }
     }
 
+    // productos
     private void inicializarProductos() {
         if (productoRepository.count() == 0) {
+
             // MOUSES
             productoRepository.save(new Producto(
                 "Mouse Gamer RGB 7200 DPI",
@@ -88,7 +89,8 @@ public class DataInitializer implements CommandLineRunner {
                 new BigDecimal("39990"),
                 8,
                 "mouses",
-                "/images/mouse1.jpg"
+                "/images/mouse1.jpg",
+                1
             ));
 
             productoRepository.save(new Producto(
@@ -97,7 +99,8 @@ public class DataInitializer implements CommandLineRunner {
                 new BigDecimal("24990"),
                 12,
                 "mouses",
-                "/images/mouse2.jpg"
+                "/images/mouse2.jpg",
+                2
             ));
 
             productoRepository.save(new Producto(
@@ -106,7 +109,8 @@ public class DataInitializer implements CommandLineRunner {
                 new BigDecimal("49990"),
                 5,
                 "mouses",
-                "/images/mouse3.jpg"
+                "/images/mouse3.jpg",
+                3
             ));
 
             productoRepository.save(new Producto(
@@ -115,8 +119,10 @@ public class DataInitializer implements CommandLineRunner {
                 new BigDecimal("15990"),
                 20,
                 "mouses",
-                "/images/mouse4.jpg"
+                "/images/mouse4.jpg",
+                4
             ));
+
 
             // TECLADOS
             productoRepository.save(new Producto(
@@ -125,7 +131,8 @@ public class DataInitializer implements CommandLineRunner {
                 new BigDecimal("119900"),
                 6,
                 "teclados",
-                "/images/teclado1.jpg"
+                "/images/teclado1.jpg",
+                5
             ));
 
             productoRepository.save(new Producto(
@@ -134,7 +141,8 @@ public class DataInitializer implements CommandLineRunner {
                 new BigDecimal("59900"),
                 10,
                 "teclados",
-                "/images/teclado2.jpg"
+                "/images/teclado2.jpg",
+                6
             ));
 
             productoRepository.save(new Producto(
@@ -143,7 +151,8 @@ public class DataInitializer implements CommandLineRunner {
                 new BigDecimal("69900"),
                 7,
                 "teclados",
-                "/images/teclado3.jpg"
+                "/images/teclado3.jpg",
+                7
             ));
 
             productoRepository.save(new Producto(
@@ -152,8 +161,10 @@ public class DataInitializer implements CommandLineRunner {
                 new BigDecimal("29900"),
                 15,
                 "teclados",
-                "/images/teclado4.jpg"
+                "/images/teclado4.jpg",
+                8
             ));
+
 
             // ALFOMBRILLAS
             productoRepository.save(new Producto(
@@ -162,7 +173,8 @@ public class DataInitializer implements CommandLineRunner {
                 new BigDecimal("24900"),
                 14,
                 "alfombrillas",
-                "/images/alfombrilla1.jpg"
+                "/images/alfombrilla1.jpg",
+                9
             ));
 
             productoRepository.save(new Producto(
@@ -171,7 +183,8 @@ public class DataInitializer implements CommandLineRunner {
                 new BigDecimal("49900"),
                 6,
                 "alfombrillas",
-                "/images/alfombrilla2.jpg"
+                "/images/alfombrilla2.jpg",
+                10
             ));
 
             productoRepository.save(new Producto(
@@ -180,7 +193,8 @@ public class DataInitializer implements CommandLineRunner {
                 new BigDecimal("9900"),
                 25,
                 "alfombrillas",
-                "/images/alfombrilla3.jpg"
+                "/images/alfombrilla3.jpg",
+                11
             ));
 
             productoRepository.save(new Producto(
@@ -189,8 +203,10 @@ public class DataInitializer implements CommandLineRunner {
                 new BigDecimal("34900"),
                 9,
                 "alfombrillas",
-                "/images/alfombrilla4.jpg"
+                "/images/alfombrilla4.jpg",
+                12
             ));
+
 
             // AUDÍFONOS
             productoRepository.save(new Producto(
@@ -199,7 +215,8 @@ public class DataInitializer implements CommandLineRunner {
                 new BigDecimal("89900"),
                 7,
                 "audifonos",
-                "/images/audifonos1.jpg"
+                "/images/audifonos1.jpg",
+                13
             ));
 
             productoRepository.save(new Producto(
@@ -208,7 +225,8 @@ public class DataInitializer implements CommandLineRunner {
                 new BigDecimal("69900"),
                 11,
                 "audifonos",
-                "/images/audifonos2.jpg"
+                "/images/audifonos2.jpg",
+                14
             ));
 
             productoRepository.save(new Producto(
@@ -217,7 +235,8 @@ public class DataInitializer implements CommandLineRunner {
                 new BigDecimal("29900"),
                 18,
                 "audifonos",
-                "/images/audifonos3.jpg"
+                "/images/audifonos3.jpg",
+                15
             ));
 
             productoRepository.save(new Producto(
@@ -226,7 +245,8 @@ public class DataInitializer implements CommandLineRunner {
                 new BigDecimal("149900"),
                 4,
                 "audifonos",
-                "/images/audifonos4.jpg"
+                "/images/audifonos4.jpg",
+                16
             ));
 
             System.out.println("Productos creados exitosamente");

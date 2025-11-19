@@ -7,80 +7,105 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root {
-            --gold-primary: #d4af37;
-            --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f7ef8a 100%);
-            --gold-border: #b8941f;
-            --black-dark: #0a0a0a;
-            --black-light: #1a1a1a;
-        }
-        
-        .navbar-brand {
-            color: var(--gold-primary) !important;
-            font-weight: bold;
-        }
-        
-        .card {
-            border: 1px solid var(--gold-border);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            background: rgba(26, 26, 26, 0.95);
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
-        }
-        
-        .producto-imagen {
-            height: 200px;
-            object-fit: cover;
-            background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--gold-primary);
-            font-size: 3rem;
-        }
-        
-        .btn-primary {
-            background: var(--gold-gradient);
-            border: none;
-            color: var(--black-dark);
-            font-weight: 600;
-        }
-        
-        .btn-primary:hover {
-            background: var(--gold-gradient);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
-        }
-        
-        .nav-pills .nav-link.active {
-            background: var(--gold-gradient) !important;
-            color: var(--black-dark) !important;
-            font-weight: 600;
-        }
-        
-        .nav-pills .nav-link {
-            color: var(--gold-primary);
-            border: 1px solid var(--gold-border);
-            margin: 0 5px;
-        }
-        
-        .badge-stock {
-            background: var(--gold-gradient);
-            color: var(--black-dark);
-        }
-        
-        .carrito-badge {
-            background: #dc3545;
-            color: white;
-            border-radius: 50%;
-            padding: 2px 6px;
-            font-size: 0.7rem;
-            margin-left: 5px;
-        }
-    </style>
+    :root {
+        --gold-primary: #d4af37;
+        --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f7ef8a 100%);
+        --gold-border: #b8941f;
+        --black-dark: #0a0a0a;
+        --black-light: #1a1a1a;
+    }
+
+    .navbar-brand {
+        color: var(--gold-primary) !important;
+        font-weight: bold;
+    }
+
+    .card {
+        border: 1px solid var(--gold-border);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background: rgba(26, 26, 26, 0.95);
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+    }
+
+    .producto-imagen {
+        height: 200px;
+        overflow: hidden;
+        background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .producto-imagen img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .producto-imagen:hover img {
+        transform: scale(1.05);
+    }
+
+    /* Fallback si la imagen no carga */
+    .producto-imagen::before {
+        content: "🖼️";
+        font-size: 3rem;
+        color: var(--gold-primary);
+        display: none;
+        position: absolute;
+    }
+
+    .producto-imagen:has(img[src=""])::before,
+    .producto-imagen:not(:has(img))::before {
+        display: block;
+    }
+
+    .btn-primary {
+        background: var(--gold-gradient);
+        border: none;
+        color: var(--black-dark);
+        font-weight: 600;
+    }
+
+    .btn-primary:hover {
+        background: var(--gold-gradient);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+    }
+
+    .nav-pills .nav-link.active {
+        background: var(--gold-gradient) !important;
+        color: var(--black-dark) !important;
+        font-weight: 600;
+    }
+
+    .nav-pills .nav-link {
+        color: var(--gold-primary);
+        border: 1px solid var(--gold-border);
+        margin: 0 5px;
+    }
+
+    .badge-stock {
+        background: var(--gold-gradient);
+        color: var(--black-dark);
+    }
+
+    .carrito-badge {
+        background: #dc3545;
+        color: white;
+        border-radius: 50%;
+        padding: 2px 6px;
+        font-size: 0.7rem;
+        margin-left: 5px;
+    }
+</style>
+
 </head>
 <body style="background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%); min-height: 100vh; color: #fff;">
     <!-- Navbar -->
@@ -95,9 +120,7 @@
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/tienda}">Inicio</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
-                    </li>
+                    
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/change-password}">
                             <i class="fas fa-key"></i> Cambiar Contraseña
@@ -165,20 +188,23 @@
             <div th:each="producto : ${productos}" class="col-lg-3 col-md-4 col-sm-6 mb-4">
                 <div class="card h-100 text-white">
                     <div class="producto-imagen">
-                        <i class="fas fa-laptop"></i>
-                    </div>
+    <img th:src="${producto.imagen}" th:alt="${producto.nombre}" 
+         style="width: 100%; height: 100%; object-fit: cover;">
+</div>
                     <div class="card-body">
                         <h5 class="card-title" th:text="${producto.nombre}"></h5>
                         <p class="card-text text-muted" th:text="${producto.descripcion}"></p>
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <span class="h4 text-warning" th:text="'$' + ${#numbers.formatDecimal(producto.precio, 1, 2, 'COMMA')}"></span>
-                            <span class="badge badge-stock" th:text="${producto.stock} + ' en stock'"></span>
+                            <span class="badge badge-stock" th:text="${producto.stockDisponible} + ' disponibles'"></span>
                         </div>
                         <form th:action="@{/agregar-carrito}" method="post">
                             <input type="hidden" name="productoId" th:value="${producto.id}">
                             <div class="input-group mb-2">
                                 <input type="number" class="form-control" name="cantidad" value="1" min="1" 
-                                       th:max="${producto.stock}" style="background: #2c2c2c; color: white; border: 1px solid var(--gold-border);">
+       th:attr="max=${producto.stockDisponible}" 
+       style="background: #2c2c2c; color: white; border: 1px solid var(--gold-border);">
+
                             </div>
                             <button type="submit" class="btn btn-primary w-100">
                                 <i class="fas fa-cart-plus me-2"></i> Agregar al Carrito
