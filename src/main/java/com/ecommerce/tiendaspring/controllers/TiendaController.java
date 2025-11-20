@@ -5,7 +5,8 @@ import com.ecommerce.tiendaspring.models.Producto;
 import com.ecommerce.tiendaspring.services.ProductoService;
 import com.ecommerce.tiendaspring.services.CarritoService;
 import com.ecommerce.tiendaspring.services.StockService;
-// UsuarioService no es necesario en este controlador (guardado usa email desde auth)
+import com.ecommerce.tiendaspring.services.UsuarioService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,7 +18,13 @@ import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-// java.util.Optional removido (no usado)
+
+import com.ecommerce.tiendaspring.models.Usuario;
+import java.io.IOException;
+import com.ecommerce.tiendaspring.models.Venta;
+import com.ecommerce.tiendaspring.services.VentaService;
+import com.ecommerce.tiendaspring.services.PdfService;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 @SessionAttributes("carrito")
@@ -26,16 +33,20 @@ public class TiendaController {
     @Autowired
     private ProductoService productoService;
 
-    // No reservar stock al agregar al carrito: no inyectamos StockService aquí
+    @Autowired
+    private VentaService ventaService;
+
+    @Autowired
+    private PdfService pdfService;
+
+    @Autowired
+    private UsuarioService usuarioService;
 
     @Autowired
     private CarritoService carritoService;
 
     @Autowired
     private StockService stockService;
-    // UsuarioService removido
-
-    // helper para usuario actual no usado en este controlador
 
     // ================= Inicializar carrito =================
     @ModelAttribute("carrito")
@@ -66,6 +77,10 @@ public class TiendaController {
             if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getName())) {
                 String email = auth.getName();
                 carritoService.guardarCarritoUsuario(email, carrito);
+            
+            Usuario usuario = usuarioService.obtenerUsuarioPorEmail(email).orElse(null);
+            model.addAttribute("usuario", usuario);
+            
             }
 
             List<Producto> productos = "todos".equals(categoria)
@@ -229,5 +244,84 @@ public class TiendaController {
 
         model.addAttribute("success", "Carrito vaciado");
         return "redirect:/carrito";
+    }
+
+    // ================= Procesar venta =================
+    @PostMapping("/procesar-venta")
+    public String procesarVenta(@ModelAttribute("carrito") List<CarritoItemDTO> carrito,
+                               Model model) {
+        try {
+            if (carrito.isEmpty()) {
+                model.addAttribute("error", "El carrito está vacío");
+                return "redirect:/carrito";
+            }
+
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String email = auth.getName();
+            Usuario usuario = usuarioService.obtenerUsuarioPorEmail(email)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+            Venta venta = ventaService.procesarVenta(usuario, carrito);
+
+            carrito.clear();
+
+            carritoService.guardarCarritoUsuario(email, carrito);
+
+            model.addAttribute("success", "¡Venta procesada exitosamente! Número de factura: " + venta.getNumeroFactura());
+            model.addAttribute("venta", venta);
+            return "confirmacion-venta";
+            
+        } catch (Exception e) {
+            model.addAttribute("error", "Error al procesar la venta: " + e.getMessage());
+            return "redirect:/carrito";
+        }
+    }
+
+    // ================= Descargar factura =================
+    @GetMapping("/descargar-factura/{ventaId}")
+    public void descargarFactura(@PathVariable Long ventaId, HttpServletResponse response) {
+        try {
+            Venta venta = ventaService.obtenerVentaPorId(ventaId);
+            if (venta == null) {
+                response.sendError(404, "Venta no encontrada");
+                return;
+            }
+
+            byte[] pdf = pdfService.generarFacturaPdf(venta);
+
+            response.setContentType("application/pdf");
+            response.setHeader("Content-Disposition", 
+                "attachment; filename=factura_" + venta.getNumeroFactura() + ".pdf");
+            response.setContentLength(pdf.length);
+
+            response.getOutputStream().write(pdf);
+            response.getOutputStream().flush();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                response.sendError(500, "Error al generar el PDF");
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    // ================= Mis compras =================
+    @GetMapping("/mis-compras")
+    public String misCompras(Model model) {
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String email = auth.getName();
+            Usuario usuario = usuarioService.obtenerUsuarioPorEmail(email)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+            List<Venta> ventas = ventaService.obtenerVentasPorUsuario(usuario.getId());
+            model.addAttribute("ventas", ventas);
+            return "mis-compras";
+        } catch (Exception e) {
+            model.addAttribute("error", "Error al cargar las compras: " + e.getMessage());
+            return "mis-compras";
+        }
     }
 }
