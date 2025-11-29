@@ -3,15 +3,20 @@ package com.deportes.tiendadeportiva.services;
 import com.deportes.tiendadeportiva.models.DetalleVenta;
 import com.deportes.tiendadeportiva.models.Venta;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.io.image.ImageData;
+import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -32,32 +37,64 @@ public class PdfService {
         PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
         PdfFont boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
 
-        // Título
+        try {
+            // Cargar y agregar logo
+            ClassPathResource logoResource = new ClassPathResource("static/images/logo-sportzone.jpg");
+            ImageData imageData = ImageDataFactory.create(logoResource.getURL());
+            Image logo = new Image(imageData);
+            
+            // Configurar tamaño y posición del logo
+            logo.setWidth(150); // Ancho en puntos
+            logo.setHeight(50); // Alto en puntos
+            logo.setHorizontalAlignment(HorizontalAlignment.CENTER);
+            
+            document.add(logo);
+            document.add(new Paragraph(" ")); // Espacio después del logo
+            
+        } catch (Exception e) {
+            // Si no encuentra el logo, mostrar texto alternativo
+            Paragraph tituloLogo = new Paragraph("🏆 SPORTZONE 🏆")
+                    .setFont(boldFont)
+                    .setFontSize(18)
+                    .setTextAlignment(TextAlignment.CENTER);
+            document.add(tituloLogo);
+        }
+
+        // Título de la factura
         Paragraph title = new Paragraph("FACTURA DE VENTA")
                 .setFont(boldFont)
-                .setFontSize(20)
+                .setFontSize(16)
                 .setTextAlignment(TextAlignment.CENTER);
         document.add(title);
 
         document.add(new Paragraph(" ")); // Espacio
 
         // Información de la empresa
-        Paragraph empresa = new Paragraph("TechStore - Tu Tienda de Tecnología")
+        Paragraph empresa = new Paragraph("SportZone - Tu Tienda Deportiva")
                 .setFont(boldFont)
-                .setFontSize(12);
+                .setFontSize(12)
+                .setTextAlignment(TextAlignment.CENTER);
         document.add(empresa);
 
-        Paragraph direccion = new Paragraph("Colombia, Bogotá")
+        Paragraph eslogan = new Paragraph("Equipamiento Deportivo de Alta Calidad")
                 .setFont(font)
-                .setFontSize(10);
+                .setFontSize(10)
+                .setTextAlignment(TextAlignment.CENTER);
+        document.add(eslogan);
+
+        Paragraph direccion = new Paragraph("Colombia, Bogotá - Centro Deportivo")
+                .setFont(font)
+                .setFontSize(9)
+                .setTextAlignment(TextAlignment.CENTER);
         document.add(direccion);
 
-        Paragraph contacto = new Paragraph("Tel: +57 1 1234567 | Email: info@techstore.com")
+        Paragraph contacto = new Paragraph("Tel: +57 1 1234567 | Email: info@sportzone.com")
                 .setFont(font)
-                .setFontSize(10);
+                .setFontSize(9)
+                .setTextAlignment(TextAlignment.CENTER);
         document.add(contacto);
 
-        document.add(new Paragraph(" ")); // Espacio
+        document.add(new Paragraph(" ").setFontSize(8)); // Espacio
 
         // Información de la factura
         Table infoTable = new Table(2);
@@ -80,11 +117,12 @@ public class PdfService {
         document.add(new Paragraph(" "));
 
         // Tabla de productos
-        Table table = new Table(UnitValue.createPercentArray(new float[]{3, 1, 2, 2}));
+        Table table = new Table(UnitValue.createPercentArray(new float[]{3, 1, 1, 1, 2}));
         table.setWidth(UnitValue.createPercentValue(100));
 
         // Encabezados de tabla
-        table.addHeaderCell(crearCelda("Producto", true));
+        table.addHeaderCell(crearCelda("Artículo Deportivo", true));
+        table.addHeaderCell(crearCelda("Deporte", true));
         table.addHeaderCell(crearCelda("Cantidad", true));
         table.addHeaderCell(crearCelda("Precio Unit.", true));
         table.addHeaderCell(crearCelda("Subtotal", true));
@@ -93,6 +131,7 @@ public class PdfService {
         DecimalFormat df = new DecimalFormat("$#,##0.00");
         for (DetalleVenta detalle : venta.getDetalles()) {
             table.addCell(crearCelda(detalle.getProducto().getNombre(), false));
+            table.addCell(crearCelda(detalle.getProducto().getDeporte(), false));
             table.addCell(crearCelda(detalle.getCantidad().toString(), false));
             table.addCell(crearCelda(df.format(detalle.getPrecioUnitario()), false));
             table.addCell(crearCelda(df.format(detalle.getSubtotal()), false));
@@ -117,17 +156,38 @@ public class PdfService {
 
         document.add(totalesTable);
 
-        // Pie de página
+        // Información adicional deportiva
         document.add(new Paragraph(" "));
-        Paragraph agradecimiento = new Paragraph("¡Gracias por su compra!")
+        Paragraph garantia = new Paragraph("✅ Garantía Deportiva: 6 meses en todos los artículos")
+                .setFont(font)
+                .setFontSize(9)
+                .setTextAlignment(TextAlignment.LEFT);
+        document.add(garantia);
+
+        Paragraph cambios = new Paragraph("🔄 Cambios y devoluciones: 15 días para artículos sin uso")
+                .setFont(font)
+                .setFontSize(9)
+                .setTextAlignment(TextAlignment.LEFT);
+        document.add(cambios);
+
+        document.add(new Paragraph(" "));
+
+        // Pie de página
+        Paragraph agradecimiento = new Paragraph("¡Gracias por elegir SportZone!")
                 .setFont(boldFont)
                 .setFontSize(12)
                 .setTextAlignment(TextAlignment.CENTER);
         document.add(agradecimiento);
 
-        Paragraph contacto2 = new Paragraph("Para consultas: soporte@techstore.com")
+        Paragraph mensaje = new Paragraph("Que cada victoria comience con el equipo adecuado")
                 .setFont(font)
                 .setFontSize(10)
+                .setTextAlignment(TextAlignment.CENTER);
+        document.add(mensaje);
+
+        Paragraph contacto2 = new Paragraph("Para consultas: soporte@sportzone.com | www.sportzone.com")
+                .setFont(font)
+                .setFontSize(9)
                 .setTextAlignment(TextAlignment.CENTER);
         document.add(contacto2);
 
