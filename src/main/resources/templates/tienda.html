@@ -3,159 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TechStore - Tu Tienda de Tecnología</title>
+    <title>SportZone - Tu Tienda Deportiva</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" th:href="@{/css/cyberpunk.css}" />
-
+    <link rel="stylesheet" th:href="@{/css/deportivo.css}" />
+    <style>
+        .navbar-brand { font-weight: bold; color: #2E8B57 !important; }
+        .nav-pills .nav-link.active { background-color: #2E8B57; border-color: #2E8B57; }
+        .btn-primary { background-color: #2E8B57; border-color: #2E8B57; }
+        .btn-primary:hover { background-color: #228B22; border-color: #228B22; }
+        .card { border: 2px solid #2E8B57; transition: transform 0.2s; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 4px 15px rgba(46, 139, 87, 0.3); }
+        .filter-section { background: #f8f9fa; border-radius: 10px; padding: 20px; }
+        .filter-title { color: #2E8B57; font-weight: bold; border-bottom: 2px solid #2E8B57; padding-bottom: 10px; }
+    </style>
 </head>
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
-    <div class="container">
+        <div class="container">
+            <!-- Logo -->
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-dumbbell me-2"></i>SportZone
+            </a>
 
-        <!-- Logo -->
-        <a class="navbar-brand" href="#">
-            <i class="fas fa-laptop-code me-2"></i>TechStore
-        </a>
+            <!-- Botón móvil -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <!-- Botón móvil -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarNav">
-
-            <!--  IZQUIERDA -->
-            <ul class="navbar-nav me-auto">
-
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/tienda}">
-                        Inicio
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/mis-compras}">
-                        <i class="fas fa-receipt"></i> Mis Compras
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link position-relative" th:href="@{/carrito}">
-                        <i class="fas fa-shopping-cart"></i> Carrito
-                        <span th:if="${cantidadCarrito > 0}" class="carrito-badge"
-                              th:text="${cantidadCarrito}"></span>
-                    </a>
-                </li>
-
-            </ul>
-
-            <!--  DERECHA -->
-            <ul class="navbar-nav ms-auto">
-
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/change-password}">
-                        <i class="fas fa-key"></i> Cambiar Contraseña
-                    </a>
-                </li>
-
-                <li class="nav-item d-flex align-items-center">
-                    <a class="nav-link" th:href="@{/logout}">
-                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                    </a>
-                </li>
-
-                <!-- Correo del usuario -->
-                <li class="nav-item d-flex align-items-center ms-2">
-                    <span class="text-warning fw-bold" th:text="${usuario?.email}"></span>
-                </li>
-
-            </ul>
-
-        </div>
-    </div>
-</nav>
-
-
-    <!-- Filtros de Categoría -->
-    <div class="container mt-4">
-        <div class="row mb-4">
-            <div class="col-12">
-                <ul class="nav nav-pills justify-content-center">
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <!-- IZQUIERDA -->
+                <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" th:classappend="${categoriaSeleccionada == 'todos'} ? 'active'" 
-                           th:href="@{/tienda}">Todos los Productos</a>
+                        <a class="nav-link" th:href="@{/tienda}">Inicio</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:classappend="${categoriaSeleccionada == 'mouses'} ? 'active'" 
-                           th:href="@{/tienda(categoria='mouses')}">🖱️ Mouses</a>
+                        <a class="nav-link" th:href="@{/mis-compras}">
+                            <i class="fas fa-receipt"></i> Mis Compras
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:classappend="${categoriaSeleccionada == 'teclados'} ? 'active'" 
-                           th:href="@{/tienda(categoria='teclados')}">⌨️ Teclados</a>
+                        <a class="nav-link position-relative" th:href="@{/carrito}">
+                            <i class="fas fa-shopping-cart"></i> Carrito
+                            <span th:if="${cantidadCarrito > 0}" class="carrito-badge" th:text="${cantidadCarrito}"></span>
+                        </a>
                     </li>
+                </ul>
+
+                <!-- DERECHA -->
+                <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" th:classappend="${categoriaSeleccionada == 'alfombrillas'} ? 'active'" 
-                           th:href="@{/tienda(categoria='alfombrillas')}">🖼️ Alfombrillas</a>
+                        <a class="nav-link" th:href="@{/change-password}">
+                            <i class="fas fa-key"></i> Cambiar Contraseña
+                        </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:classappend="${categoriaSeleccionada == 'audifonos'} ? 'active'" 
-                           th:href="@{/tienda(categoria='audifonos')}">🎧 Audífonos</a>
+                    <li class="nav-item d-flex align-items-center">
+                        <a class="nav-link" th:href="@{/logout}">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        </a>
+                    </li>
+                    <!-- Correo del usuario -->
+                    <li class="nav-item d-flex align-items-center ms-2">
+                        <span class="text-warning fw-bold" th:text="${usuario?.nombre}"></span>
                     </li>
                 </ul>
             </div>
         </div>
+    </nav>
 
-        <!-- Mensajes -->
-        <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
-            <i class="fas fa-check-circle"></i> 
-            <span th:text="${success}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        
-        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
-            <i class="fas fa-exclamation-triangle"></i> 
-            <span th:text="${error}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-
-        <!-- Productos -->
+    <div class="container mt-4">
         <div class="row">
-            <div th:each="producto : ${productos}" class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                <div class="card h-100 text-white">
-                    <div class="producto-imagen">
-    <img th:src="${producto.imagen}" th:alt="${producto.nombre}" 
-         style="width: 100%; height: 100%; object-fit: cover;">
-</div>
-                    <div class="card-body">
-                        <h5 class="card-title" th:text="${producto.nombre}"></h5>
-                        <p class="card-text text-muted" th:text="${producto.descripcion}"></p>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="h4 text-warning" th:text="'$' + ${#numbers.formatDecimal(producto.precio, 1, 2, 'COMMA')}"></span>
-                            <span id="stock-" th:attr="id=${'stock-' + producto.id}" class="badge badge-stock" th:text="${producto.stockDisponible} + ' disponibles'"></span>
+            <!-- FILTROS IZQUIERDA -->
+            <div class="col-lg-3 col-md-4 mb-4">
+                <div class="filter-section">
+                    <h5 class="filter-title mb-3">
+                        <i class="fas fa-filter me-2"></i>Filtros
+                    </h5>
+                    
+                    <!-- Filtro por Deporte -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-dark mb-3">🏆 Deporte</h6>
+                        <div class="list-group">
+                            <a th:href="@{'/tienda?categoria=todos&marca=' + ${marcaSeleccionada}}"
+                               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                               th:classappend="${categoriaSeleccionada == 'todos'} ? 'active'">
+                                Todos los deportes
+                                <span class="badge bg-secondary rounded-pill" th:text="${totalProductos}"></span>
+                            </a>
+                            <a th:each="deporte : ${deportes}" 
+                               th:href="@{'/tienda?categoria=' + ${deporte} + '&marca=' + ${marcaSeleccionada}}"
+                               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                               th:classappend="${categoriaSeleccionada == deporte} ? 'active'">
+                                <span th:text="${deporte}"></span>
+                                <span class="badge bg-secondary rounded-pill" th:text="${statsDeportes[deporte]}"></span>
+                            </a>
                         </div>
-                        <form th:action="@{/agregar-carrito}" method="post">
-                            <input type="hidden" name="productoId" th:value="${producto.id}">
-                            <div class="input-group mb-2">
-                                     <input type="number" class="form-control" name="cantidad" value="1" min="1"
-     th:attr="max=${producto.stockDisponible}, data-product-id=${producto.id}, id=${'input-' + producto.id}" />
+                    </div>
 
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="fas fa-cart-plus me-2"></i> Agregar al Carrito
-                            </button>
-                        </form>
+                    <!-- Filtro por Marca -->
+                    <div class="mb-3">
+                        <h6 class="fw-bold text-dark mb-3">🏷️ Marca</h6>
+                        <div class="list-group">
+                            <a th:href="@{'/tienda?categoria=' + ${categoriaSeleccionada} + '&marca=todas'}"
+                               class="list-group-item list-group-item-action"
+                               th:classappend="${marcaSeleccionada == 'todas'} ? 'active'">
+                                Todas las marcas
+                            </a>
+                            <a th:each="marca : ${marcas}" 
+                               th:href="@{'/tienda?categoria=' + ${categoriaSeleccionada} + '&marca=' + ${marca}}"
+                               class="list-group-item list-group-item-action"
+                               th:classappend="${marcaSeleccionada == marca} ? 'active'">
+                                <span th:text="${marca}"></span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Información de filtros activos -->
+                    <div th:if="${categoriaSeleccionada != 'todos' || marcaSeleccionada != 'todas'}" 
+                         class="alert alert-info mt-3">
+                        <small>
+                            <i class="fas fa-info-circle"></i>
+                            Filtros aplicados:
+                            <span th:if="${categoriaSeleccionada != 'todos'}" th:text="'Deporte: ' + ${categoriaSeleccionada}"></span>
+                            <span th:if="${marcaSeleccionada != 'todas'}" th:text="' | Marca: ' + ${marcaSeleccionada}"></span>
+                            <br>
+                            <a th:href="@{/tienda}" class="text-decoration-none">↶ Quitar filtros</a>
+                        </small>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Mensaje si no hay productos -->
-        <div th:if="${#lists.isEmpty(productos)}" class="text-center py-5">
-            <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
-            <h3 class="text-muted">No hay productos disponibles</h3>
-            <p class="text-muted">Intenta con otra categoría o vuelve más tarde.</p>
+            <!-- PRODUCTOS DERECHA -->
+            <div class="col-lg-9 col-md-8">
+                <!-- Mensajes -->
+                <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+                    <i class="fas fa-check-circle"></i> 
+                    <span th:text="${success}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+                    <i class="fas fa-exclamation-triangle"></i> 
+                    <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <!-- Header de productos -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="text-dark">
+                        <i class="fas fa-store me-2"></i>
+                        <span th:if="${categoriaSeleccionada == 'todos'}">Todos los Artículos Deportivos</span>
+                        <span th:if="${categoriaSeleccionada != 'todos'}" th:text="${categoriaSeleccionada}"></span>
+                        <small class="text-muted ms-2" th:text="'(' + ${#lists.size(productos)} + ' artículos)'"></small>
+                    </h4>
+                </div>
+
+                <!-- Grid de Productos -->
+                <div class="row">
+                    <div th:each="producto : ${productos}" class="col-xl-4 col-lg-6 col-md-6 mb-4">
+                        <div class="card h-100 text-white">
+                            <div class="producto-imagen">
+                                <img th:src="${producto.imagen}" th:alt="${producto.nombre}" 
+                                     style="width: 100%; height: 200px; object-fit: cover; background: #f8f9fa;"
+                                     onerror="this.src='https://via.placeholder.com/300x200/2E8B57/FFFFFF?text='+encodeURIComponent(this.alt)">
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title text-dark" th:text="${producto.nombre}"></h5>
+                                <p class="card-text text-muted" th:text="${producto.descripcion}"></p>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="h4 text-success" th:text="'$' + ${#numbers.formatDecimal(producto.precio, 1, 2, 'COMMA')}"></span>
+                                    <span class="badge bg-secondary" th:text="${producto.deporte}"></span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <small class="text-muted" th:text="'Marca: ' + ${producto.marca}"></small>
+                                    <span id="stock-" th:attr="id=${'stock-' + producto.id}" class="badge bg-warning text-dark" th:text="${producto.stockDisponible} + ' disponibles'"></span>
+                                </div>
+                                <form th:action="@{/agregar-carrito}" method="post">
+                                    <input type="hidden" name="productoId" th:value="${producto.id}">
+                                    <div class="input-group mb-2">
+                                        <input type="number" class="form-control" name="cantidad" value="1" min="1"
+                                               th:attr="max=${producto.stockDisponible}, data-product-id=${producto.id}, id=${'input-' + producto.id}" />
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-cart-plus me-2"></i> Agregar al Carrito
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mensaje si no hay productos -->
+                <div th:if="${#lists.isEmpty(productos)}" class="text-center py-5">
+                    <i class="fas fa-basketball-ball fa-3x text-muted mb-3"></i>
+                    <h3 class="text-muted">No hay artículos disponibles</h3>
+                    <p class="text-muted">Intenta con otros filtros o vuelve más tarde.</p>
+                </div>
+            </div>
         </div>
     </div>
 

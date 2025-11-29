@@ -22,6 +22,8 @@ import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.io.IOException;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -69,6 +71,7 @@ public class TiendaController {
     // ================= Mostrar tienda =================
     @GetMapping("/tienda")
     public String mostrarTienda(@RequestParam(defaultValue = "todos") String categoria,
+                                @RequestParam(defaultValue = "todas") String marca,
                                 @ModelAttribute("carrito") List<CarritoItemDTO> carrito,
                                 HttpSession session,
                                 Model model) {
@@ -78,17 +81,36 @@ public class TiendaController {
                 String email = auth.getName();
                 carritoService.guardarCarritoUsuario(email, carrito);
             
-            Usuario usuario = usuarioService.obtenerUsuarioPorEmail(email).orElse(null);
-            model.addAttribute("usuario", usuario);
-            
+                Usuario usuario = usuarioService.obtenerUsuarioPorEmail(email).orElse(null);
+                model.addAttribute("usuario", usuario);
             }
 
-            List<ArticuloDeportivo> productos = "todos".equals(categoria)
-                    ? productoService.obtenerProductosDisponibles()
-                    : productoService.obtenerProductosDisponiblesPorCategoria(categoria);
+            // Obtener productos según filtros
+            List<ArticuloDeportivo> productos;
+            if ("todos".equals(categoria) && "todas".equals(marca)) {
+                productos = productoService.obtenerProductosDisponibles();
+            } else if ("todos".equals(categoria)) {
+                productos = productoService.obtenerProductosDisponiblesPorMarca(marca);
+            } else if ("todas".equals(marca)) {
+                productos = productoService.obtenerProductosDisponiblesPorCategoria(categoria);
+            } else {
+                productos = productoService.obtenerProductosDisponiblesPorCategoriaYMarca(categoria, marca);
+            }
 
+            // Obtener listas para filtros
+            List<String> deportes = productoService.obtenerDeportesUnicos();
+            List<String> marcas = productoService.obtenerMarcasUnicas();
+            Map<String, Long> statsDeportes = productoService.obtenerEstadisticasDeportes();
+            int totalProductos = productoService.obtenerTotalProductosDisponibles();
+
+            // Agregar atributos al modelo
             model.addAttribute("productos", productos);
             model.addAttribute("categoriaSeleccionada", categoria);
+            model.addAttribute("marcaSeleccionada", marca);
+            model.addAttribute("deportes", deportes);
+            model.addAttribute("marcas", marcas);
+            model.addAttribute("statsDeportes", statsDeportes);
+            model.addAttribute("totalProductos", totalProductos);
 
             return "tienda";
 
@@ -103,14 +125,13 @@ public class TiendaController {
     public String agregarAlCarrito(@RequestParam Long productoId,
                                    @RequestParam(defaultValue = "1") int cantidad,
                                    @RequestParam(defaultValue = "todos") String categoria,
+                                   @RequestParam(defaultValue = "todas") String marca,
                                    @ModelAttribute("carrito") List<CarritoItemDTO> carrito,
                                    Model model) {
         try {
             ArticuloDeportivo producto = productoService.obtenerProductoPorId(productoId)
                     .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
-            // No reservamos stock en BD al agregar al carrito. Hacemos una validación local
-            // para evitar que el mismo usuario agregue más de lo que hay en `stock`.
             CarritoItemDTO itemExistente = carrito.stream()
                     .filter(i -> i.getProducto().getId().equals(productoId))
                     .findFirst()
@@ -119,23 +140,20 @@ public class TiendaController {
             if (itemExistente != null) {
                 int cantidadAnterior = itemExistente.getCantidad();
                 int nuevaCantidadTotal = cantidadAnterior + cantidad;
-                // intentar actualizar reserva (atomico)
                 if (!stockService.actualizarReserva(productoId, cantidadAnterior, nuevaCantidadTotal)) {
                     model.addAttribute("error", "No hay suficiente stock. Solo quedan " + producto.getStockDisponible() + " unidades.");
-                    return "redirect:/tienda?categoria=" + categoria;
+                    return "redirect:/tienda?categoria=" + categoria + "&marca=" + marca;
                 }
                 itemExistente.setCantidad(nuevaCantidadTotal);
-                // actualizar referencia de producto con estado actual
                 itemExistente.setProducto(producto);
             } else {
                 if (!stockService.reservarStock(productoId, cantidad)) {
                     model.addAttribute("error", "No hay suficiente stock. Solo quedan " + producto.getStockDisponible() + " unidades.");
-                    return "redirect:/tienda?categoria=" + categoria;
+                    return "redirect:/tienda?categoria=" + categoria + "&marca=" + marca;
                 }
                 carrito.add(new CarritoItemDTO(producto, cantidad));
             }
 
-            // Guardar carrito en BD si usuario está autenticado
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getName())) {
                 carritoService.guardarCarritoUsuario(auth.getName(), carrito);
@@ -147,7 +165,7 @@ public class TiendaController {
             model.addAttribute("error", "Error al agregar producto: " + e.getMessage());
         }
 
-        return "redirect:/tienda?categoria=" + categoria;
+        return "redirect:/tienda?categoria=" + categoria + "&marca=" + marca;
     }
 
     // ================= Ver carrito =================
@@ -171,15 +189,12 @@ public class TiendaController {
             while (it.hasNext()) {
                 CarritoItemDTO item = it.next();
                 if (item.getProducto().getId().equals(productoId)) {
-                    //int cantidadAnterior = item.getCantidad();
                     if (cantidad <= 0) {
-                        // liberar reserva y remover
                         int cantidadAnterior = item.getCantidad();
                         stockService.liberarStock(productoId, cantidadAnterior);
                         it.remove();
                         model.addAttribute("success", "Producto eliminado");
                     } else {
-                        // actualizar reserva de forma atomica
                         int cantidadAnterior = item.getCantidad();
                         if (!stockService.actualizarReserva(productoId, cantidadAnterior, cantidad)) {
                             model.addAttribute("error", "No hay suficiente stock para actualizar cantidad");
@@ -213,7 +228,6 @@ public class TiendaController {
         while (it.hasNext()) {
             CarritoItemDTO item = it.next();
             if (item.getProducto().getId().equals(productoId)) {
-                // liberar reserva antes de remover
                 stockService.liberarStock(productoId, item.getCantidad());
                 it.remove();
                 break;

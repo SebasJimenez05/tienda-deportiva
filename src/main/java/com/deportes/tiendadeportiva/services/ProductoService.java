@@ -10,6 +10,8 @@ import com.deportes.tiendadeportiva.repositories.ProductoRepository;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.HashMap;
 
 @Service
 public class ProductoService {
@@ -57,23 +59,23 @@ public class ProductoService {
     }
     
     // Método para reponer stock (añadir unidades)
-public ArticuloDeportivo reponerStock(Long productoId, int cantidadAgregar) {
-    ArticuloDeportivo producto = productoRepository.findById(productoId)
-            .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
+    public ArticuloDeportivo reponerStock(Long productoId, int cantidadAgregar) {
+        ArticuloDeportivo producto = productoRepository.findById(productoId)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado"));
 
-    // Limitar la reposición máxima a 30 unidades por petición
-    int cantidadReal = Math.min(cantidadAgregar, 30);
-    int nuevoStock = (producto.getStock() == null ? 0 : producto.getStock()) + cantidadReal;
-    producto.setStock(nuevoStock);
-    ArticuloDeportivo guardado = productoRepository.save(producto);
+        // Limitar la reposición máxima a 30 unidades por petición
+        int cantidadReal = Math.min(cantidadAgregar, 30);
+        int nuevoStock = (producto.getStock() == null ? 0 : producto.getStock()) + cantidadReal;
+        producto.setStock(nuevoStock);
+        ArticuloDeportivo guardado = productoRepository.save(producto);
 
-    // Notificar a clientes conectados (WebSocket)
-    try {
-        stockNotifier.notificarCambioStock(guardado);
-    } catch (Exception ignored) {}
+        // Notificar a clientes conectados (WebSocket)
+        try {
+            stockNotifier.notificarCambioStock(guardado);
+        } catch (Exception ignored) {}
 
-    return guardado;
-}
+        return guardado;
+    }
 
     public void actualizarStock(Long productoId, int cantidadVendida) {
         Optional<ArticuloDeportivo> productoOpt = productoRepository.findById(productoId);
@@ -99,7 +101,6 @@ public ArticuloDeportivo reponerStock(Long productoId, int cantidadAgregar) {
                 .collect(Collectors.toList());
     }
 
-
     public List<ArticuloDeportivo> obtenerProductosDisponiblesPorCategoria(String categoria) {
         return productoRepository.findByDeporte(
                 categoria,
@@ -111,5 +112,65 @@ public ArticuloDeportivo reponerStock(Long productoId, int cantidadAgregar) {
                 })
                 .filter(p -> p.getStockDisponible() > 0)
                 .collect(Collectors.toList());
+    }
+
+    // ========== NUEVOS MÉTODOS PARA FILTROS ==========
+
+    public List<ArticuloDeportivo> obtenerProductosDisponiblesPorMarca(String marca) {
+        return productoRepository.findByMarca(
+                marca,
+                Sort.by(Sort.Direction.ASC, "orden")
+        ).stream()
+                .peek(p -> {
+                    Integer reservado = carritoItemRepository.sumCantidadByProductoId(p.getId());
+                    p.setStockReservado(reservado == null ? 0 : reservado);
+                })
+                .filter(p -> p.getStockDisponible() > 0)
+                .collect(Collectors.toList());
+    }
+
+    public List<ArticuloDeportivo> obtenerProductosDisponiblesPorCategoriaYMarca(String categoria, String marca) {
+        return productoRepository.findByDeporteAndMarca(
+                categoria,
+                marca,
+                Sort.by(Sort.Direction.ASC, "orden")
+        ).stream()
+                .peek(p -> {
+                    Integer reservado = carritoItemRepository.sumCantidadByProductoId(p.getId());
+                    p.setStockReservado(reservado == null ? 0 : reservado);
+                })
+                .filter(p -> p.getStockDisponible() > 0)
+                .collect(Collectors.toList());
+    }
+
+    public List<String> obtenerDeportesUnicos() {
+        return productoRepository.findAll().stream()
+                .map(ArticuloDeportivo::getDeporte)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    public List<String> obtenerMarcasUnicas() {
+        return productoRepository.findAll().stream()
+                .map(ArticuloDeportivo::getMarca)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+    }
+
+    public Map<String, Long> obtenerEstadisticasDeportes() {
+        return productoRepository.findAll().stream()
+                .filter(p -> p.getStockDisponible() > 0)
+                .collect(Collectors.groupingBy(
+                    ArticuloDeportivo::getDeporte,
+                    Collectors.counting()
+                ));
+    }
+
+    public int obtenerTotalProductosDisponibles() {
+        return (int) productoRepository.findAll().stream()
+                .filter(p -> p.getStockDisponible() > 0)
+                .count();
     }
 }
