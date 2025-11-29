@@ -3,158 +3,355 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro - Ventas App</title>
+    <title>Registro - SportZone</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" th:href="@{/css/cyberpunk.css}" />
+    <link rel="stylesheet" th:href="@{/css/deportivo.css}" />
+    <style>
+        .btn-primary { 
+            background-color: #2E8B57; 
+            border-color: #2E8B57; 
+            font-weight: 600;
+        }
+        .btn-primary:hover { 
+            background-color: #228B22; 
+            border-color: #228B22;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(46, 139, 87, 0.3);
+        }
+        .register-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #2E8B57 0%, #228B22 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .register-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: none;
+            overflow: hidden;
+            max-width: 520px;
+            width: 100%;
+        }
+        .register-header {
+            background: linear-gradient(135deg, #2E8B57 0%, #228B22 100%);
+            color: white;
+            padding: 2rem 2rem;
+            text-align: center;
+        }
+        .register-body {
+            padding: 2.5rem 2rem;
+        }
+        .logo-icon {
+            background: rgba(255, 255, 255, 0.2);
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.8rem;
+        }
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus {
+            border-color: #2E8B57;
+            box-shadow: 0 0 0 0.2rem rgba(46, 139, 87, 0.25);
+        }
+        .input-group-text {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-right: none;
+            border-radius: 12px 0 0 12px;
+        }
+        .input-group .form-control {
+            border-left: none;
+            border-radius: 0 12px 12px 0;
+        }
+        .input-group .form-control:focus {
+            border-left: none;
+        }
+        .password-toggle {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-left: none;
+            border-radius: 0 12px 12px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .password-toggle:hover {
+            background: #e9ecef;
+        }
+        .alert {
+            border-radius: 12px;
+            border: none;
+            padding: 1rem 1.25rem;
+        }
+        .alert-danger {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border-left: 4px solid #dc3545;
+        }
+        .btn-outline-primary {
+            border-color: #2E8B57;
+            color: #2E8B57;
+            font-weight: 500;
+        }
+        .btn-outline-primary:hover {
+            background-color: #2E8B57;
+            border-color: #2E8B57;
+            transform: translateY(-1px);
+        }
+        .back-home {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 10;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+        .feature-icon {
+            color: #2E8B57;
+            margin-right: 0.5rem;
+        }
+        .validation-icon {
+            margin-right: 5px;
+        }
+        .password-strength { 
+            height: 6px; 
+            border-radius: 3px; 
+            transition: all 0.3s ease;
+        }
+        .strength-weak { 
+            width: 25%; 
+            background: linear-gradient(90deg, #dc3545, #e4606d);
+        }
+        .strength-fair { 
+            width: 50%; 
+            background: linear-gradient(90deg, #fd7e14, #fd9843);
+        }
+        .strength-good { 
+            width: 75%; 
+            background: linear-gradient(90deg, #198754, #20c997);
+        }
+        .strength-strong { 
+            width: 100%; 
+            background: linear-gradient(90deg, #2E8B57, #228B22);
+        }
+        .requirement-item { 
+            display: flex; 
+            align-items: center; 
+            margin-bottom: 5px; 
+            font-size: 0.85rem; 
+        }
+        .requirement-valid { color: #2E8B57; }
+        .requirement-invalid { color: #6c757d; }
+        .requirement-item i { margin-right: 8px; font-size: 0.7rem; }
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 1.5rem 0;
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .divider::before {
+            margin-right: 1rem;
+        }
+        .divider::after {
+            margin-left: 1rem;
+        }
+        .api-loading { color: #6c757d; }
+        .api-warning { color: #fd7e14; }
+        .api-success { color: #2E8B57; }
+    </style>
 </head>
-<body class="bg-light">
-    <div class="container">
-        <div class="row justify-content-center min-vh-100 align-items-center">
-            <div class="col-md-8 col-lg-6">
-                <div class="card shadow-lg">
-                    <div class="card-body p-5">
+<body>
+    <div class="register-container">
+        <!-- Botón Volver al Home -->
+        <div class="back-home">
+            <a th:href="@{/}" class="btn btn-outline-light btn-sm">
+                <i class="fas fa-arrow-left me-1"></i> Volver al Inicio
+            </a>
+        </div>
 
-                        <!-- Botón Volver al Home -->
-    <div class="text-start mb-4">
-        <a th:href="@{/}" class="btn btn-outline-primary btn-sm">
-            <i class="fas fa-arrow-left me-1"></i> Volver al Home
-        </a>
-    </div>
+        <div class="register-card">
+            <!-- Header -->
+            <div class="register-header">
+                <div class="logo-icon">
+                    <i class="fas fa-dumbbell"></i>
+                </div>
+                <h2 class="fw-bold mb-2">SportZone</h2>
+                <p class="mb-0 opacity-90">Únete a nuestra comunidad deportiva</p>
+            </div>
 
-                        <div class="text-center mb-4">
-                            <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center mb-3 logo-glow" style="width: 80px; height: 80px;">
-                                <i class="fas fa-laptop-code fa-2x text-white"></i>
-                            </div>
-                            <h2 class="card-title fw-bold">Crear Cuenta</h2>
-                            <p class="text-muted">Regístrate para empezar a comprar productos para tu PC</p>
-                        </div>
-
-                        <!-- Mensajes del servidor -->
-                        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
-                            <i class="fas fa-exclamation-triangle"></i> 
-                            <span th:text="${error}"></span>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-
-                        <!-- Formulario de Registro -->
-                        <form th:action="@{/register}" method="post" id="registerForm" novalidate>
-                            <!-- Campo Nombre y Apellido -->
-                            <div class="mb-4">
-                                <label for="nombre" class="form-label fw-semibold">Nombre y Apellido *</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                    <input type="text" class="form-control" id="nombre" name="nombre" 
-                                           placeholder="Ej: Juan Pérez" required
-                                           pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{3,50}$"
-                                           oninput="validateNombre()">
-                                </div>
-                                <div class="valid-feedback" id="nombreValid">
-                                    <i class="fas fa-check-circle validation-icon"></i>Nombre válido
-                                </div>
-                                <div class="invalid-feedback" id="nombreError">
-                                    <i class="fas fa-exclamation-circle validation-icon"></i>
-                                    <span id="nombreErrorText"></span>
-                                </div>
-                                <div id="apiStatus" class="mt-1" style="display: none;">
-                                    <small><i class="fas fa-sync-alt fa-spin"></i> <span>Verificando nombre...</span></small>
-                                </div>
-                                <div class="form-text">
-                                    <small>Nombre obligatorio, apellido opcional. Solo letras, cada palabra 3-20 caracteres.</small>
-                                </div>
-                            </div>
-
-                            <!-- Campo Email -->
-                            <div class="mb-4">
-                                <label for="email" class="form-label fw-semibold">Email *</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                     <input type="email" class="form-control" id="email" name="email" 
-                                         placeholder="tucorreo@gmail.com" required
-                                           oninput="validateEmail()">
-                                </div>
-                                <div class="valid-feedback" id="emailValid">
-                                    <i class="fas fa-check-circle validation-icon"></i>Email válido
-                                </div>
-                                <div class="invalid-feedback" id="emailError">
-                                    <i class="fas fa-exclamation-circle validation-icon"></i>
-                                    <span id="emailErrorText"></span>
-                                </div>
-                                <div class="form-text">
-                                    <small>Solo se aceptan cuentas @gmail.com. 3-30 caracteres antes del @.</small>
-                                </div>
-
-                            <!-- Campo Contraseña -->
-                            <div class="mb-4">
-                                <label for="password" class="form-label fw-semibold">Contraseña *</label>
-                                <div class="input-group">
-                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                    <input type="password" class="form-control" id="password" name="password" 
-                                           placeholder="Mínimo 8 caracteres" minlength="8" required
-                                           oninput="validatePassword()">
-                                    <button type="button" class="password-toggle" onclick="togglePassword('password')">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </div>
-                                
-                                <!-- Barra de fortaleza de contraseña -->
-                                <div class="progress-container">
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <small>Fortaleza:</small>
-                                        <small id="strengthText" class="text-muted">Débil</small>
-                                    </div>
-                                    <div class="progress" style="height: 6px; border-radius: 3px;">
-                                        <div id="passwordStrength" class="password-strength strength-weak"></div>
-                                    </div>
-                                </div>
-
-                                <!-- Requisitos de contraseña -->
-                                <div class="requirement-list">
-                                    <div class="requirement-item" id="reqLength">
-                                        <i class="fas fa-circle requirement-invalid"></i>
-                                        <span>Mínimo 8 caracteres</span>
-                                    </div>
-                                    <div class="requirement-item" id="reqLowercase">
-                                        <i class="fas fa-circle requirement-invalid"></i>
-                                        <span>Al menos una minúscula</span>
-                                    </div>
-                                    <div class="requirement-item" id="reqUppercase">
-                                        <i class="fas fa-circle requirement-invalid"></i>
-                                        <span>Al menos una mayúscula</span>
-                                    </div>
-                                    <div class="requirement-item" id="reqNumber">
-                                        <i class="fas fa-circle requirement-invalid"></i>
-                                        <span>Al menos un número</span>
-                                    </div>
-                                    <div class="requirement-item" id="reqSpecial">
-                                        <i class="fas fa-circle requirement-invalid"></i>
-                                        <span>Al menos un símbolo (!@#$%^&*)</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="valid-feedback" id="passwordValid">
-                                    <i class="fas fa-check-circle validation-icon"></i>Contraseña válida
-                                </div>
-                                <div class="invalid-feedback" id="passwordError">
-                                    <i class="fas fa-exclamation-circle validation-icon"></i>
-                                    <span id="passwordErrorText"></span>
-                                </div>
-                            </div>
-
-                            <div class="d-grid mb-3">
-                                <button type="submit" class="btn btn-primary btn-lg fw-semibold" id="submitButton" disabled>
-                                    <i class="fas fa-user-plus me-2"></i> Crear Cuenta
-                                </button>
-                            </div>
-                        </form>
-
-                        <div class="text-center mt-4 pt-3 border-top">
-                            <p class="mb-2">¿Ya tienes una cuenta?</p>
-                            <a th:href="@{/login}" class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-sign-in-alt me-1"></i> Inicia sesión aquí
-                            </a>
+            <!-- Body -->
+            <div class="register-body">
+                <!-- Mensajes del servidor -->
+                <div th:if="${error}" class="alert alert-danger mb-4">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-triangle feature-icon"></i>
+                        <div>
+                            <strong class="d-block">Error en el registro</strong>
+                            <small class="d-block mt-1" th:text="${error}"></small>
                         </div>
                     </div>
+                </div>
+
+                <!-- Formulario de Registro -->
+                <form th:action="@{/register}" method="post" id="registerForm" novalidate>
+                    <!-- Campo Nombre y Apellido -->
+                    <div class="mb-4">
+                        <label for="nombre" class="form-label">
+                            <i class="fas fa-user feature-icon"></i>Nombre y Apellido *
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-user text-muted"></i>
+                            </span>
+                            <input type="text" class="form-control" id="nombre" name="nombre" 
+                                   placeholder="Ej: Juan Pérez" required
+                                   pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{3,50}$"
+                                   oninput="validateNombre()">
+                        </div>
+                        <div class="valid-feedback" id="nombreValid">
+                            <i class="fas fa-check-circle validation-icon text-success"></i>Nombre válido
+                        </div>
+                        <div class="invalid-feedback" id="nombreError">
+                            <i class="fas fa-exclamation-circle validation-icon text-danger"></i>
+                            <span id="nombreErrorText"></span>
+                        </div>
+                        <div id="apiStatus" class="mt-1" style="display: none;">
+                            <small><i class="fas fa-sync-alt fa-spin"></i> <span>Verificando nombre...</span></small>
+                        </div>
+                        <div class="form-text text-muted mt-2">
+                            <small>
+                                <i class="fas fa-info-circle feature-icon"></i>
+                                Nombre obligatorio, apellido opcional. Solo letras, cada palabra 3-20 caracteres.
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- Campo Email -->
+                    <div class="mb-4">
+                        <label for="email" class="form-label">
+                            <i class="fas fa-envelope feature-icon"></i>Email *
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-envelope text-muted"></i>
+                            </span>
+                            <input type="email" class="form-control" id="email" name="email" 
+                                   placeholder="tucorreo@gmail.com" required
+                                   oninput="validateEmail()">
+                        </div>
+                        <div class="valid-feedback" id="emailValid">
+                            <i class="fas fa-check-circle validation-icon text-success"></i>Email válido
+                        </div>
+                        <div class="invalid-feedback" id="emailError">
+                            <i class="fas fa-exclamation-circle validation-icon text-danger"></i>
+                            <span id="emailErrorText"></span>
+                        </div>
+                        <div class="form-text text-muted mt-2">
+                            <small>
+                                <i class="fas fa-info-circle feature-icon"></i>
+                                Solo se aceptan cuentas @gmail.com. 3-30 caracteres antes del @.
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- Campo Contraseña -->
+                    <div class="mb-4">
+                        <label for="password" class="form-label">
+                            <i class="fas fa-lock feature-icon"></i>Contraseña *
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-lock text-muted"></i>
+                            </span>
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   placeholder="Mínimo 8 caracteres" minlength="8" required
+                                   oninput="validatePassword()">
+                            <button type="button" class="btn password-toggle" onclick="togglePassword('password')">
+                                <i class="fas fa-eye text-muted"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Barra de fortaleza de contraseña -->
+                        <div class="progress-container mt-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <small class="text-dark">Fortaleza:</small>
+                                <small id="strengthText" class="text-muted">Débil</small>
+                            </div>
+                            <div class="progress" style="height: 8px; border-radius: 4px; background-color: #e9ecef;">
+                                <div id="passwordStrength" class="password-strength strength-weak"></div>
+                            </div>
+                        </div>
+
+                        <!-- Requisitos de contraseña -->
+                        <div class="requirement-list mt-3">
+                            <div class="requirement-item" id="reqLength">
+                                <i class="fas fa-circle requirement-invalid"></i>
+                                <span>Mínimo 8 caracteres</span>
+                            </div>
+                            <div class="requirement-item" id="reqLowercase">
+                                <i class="fas fa-circle requirement-invalid"></i>
+                                <span>Al menos una minúscula</span>
+                            </div>
+                            <div class="requirement-item" id="reqUppercase">
+                                <i class="fas fa-circle requirement-invalid"></i>
+                                <span>Al menos una mayúscula</span>
+                            </div>
+                            <div class="requirement-item" id="reqNumber">
+                                <i class="fas fa-circle requirement-invalid"></i>
+                                <span>Al menos un número</span>
+                            </div>
+                            <div class="requirement-item" id="reqSpecial">
+                                <i class="fas fa-circle requirement-invalid"></i>
+                                <span>Al menos un símbolo (!@#$%^&*)</span>
+                            </div>
+                        </div>
+                        
+                        <div class="valid-feedback" id="passwordValid">
+                            <i class="fas fa-check-circle validation-icon text-success"></i>Contraseña válida
+                        </div>
+                        <div class="invalid-feedback" id="passwordError">
+                            <i class="fas fa-exclamation-circle validation-icon text-danger"></i>
+                            <span id="passwordErrorText"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-grid mb-4">
+                        <button type="submit" class="btn btn-primary btn-lg py-2 fw-semibold" id="submitButton" disabled>
+                            <i class="fas fa-user-plus me-2"></i> Crear Cuenta
+                        </button>
+                    </div>
+                </form>
+
+                <div class="divider">¿Ya tienes una cuenta?</div>
+
+                <div class="text-center">
+                    <a th:href="@{/login}" class="btn btn-outline-primary w-100">
+                        <i class="fas fa-sign-in-alt me-2"></i> Iniciar Sesión
+                    </a>
                 </div>
             </div>
         </div>
@@ -175,12 +372,10 @@
             
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
-                toggleIcon.classList.remove('fa-eye');
-                toggleIcon.classList.add('fa-eye-slash');
+                toggleIcon.classList.replace('fa-eye', 'fa-eye-slash');
             } else {
                 passwordInput.type = 'password';
-                toggleIcon.classList.remove('fa-eye-slash');
-                toggleIcon.classList.add('fa-eye');
+                toggleIcon.classList.replace('fa-eye-slash', 'fa-eye');
             }
         }
 
@@ -379,120 +574,119 @@
         }
 
         // VALIDACIÓN DE EMAIL ACTUALIZADA PARA CUALQUIER GMAIL
-        // Validación del email solo para Gmail
-function validateEmail() {
-    const emailInput = document.getElementById('email');
-    const errorElement = document.getElementById('emailError');
-    const errorText = document.getElementById('emailErrorText');
-    const validElement = document.getElementById('emailValid');
-    const value = emailInput.value.trim();
+        function validateEmail() {
+            const emailInput = document.getElementById('email');
+            const errorElement = document.getElementById('emailError');
+            const errorText = document.getElementById('emailErrorText');
+            const validElement = document.getElementById('emailValid');
+            const value = emailInput.value.trim();
 
-    // Reset estados
-    emailInput.classList.remove('is-valid', 'is-invalid');
-    errorElement.style.display = 'none';
-    validElement.style.display = 'none';
+            // Reset estados
+            emailInput.classList.remove('is-valid', 'is-invalid');
+            errorElement.style.display = 'none';
+            validElement.style.display = 'none';
 
-    if (value === '') {
-        showError(emailInput, errorElement, errorText, 'El email es obligatorio');
-        isEmailValid = false;
-        updateSubmitButton();
-        return;
-    }
-
-    // 1. Solo @gmail.com
-    if (!value.endsWith('@gmail.com')) {
-        showError(emailInput, errorElement, errorText, 'Solo se aceptan cuentas de Gmail (@gmail.com)');
-        isEmailValid = false;
-        updateSubmitButton();
-        return;
-    }
-
-    const localPart = value.split('@')[0];
-    const localPartLower = localPart.toLowerCase();
-
-    // 2. Longitud antes del @
-    if (localPart.length < 3) {
-        showError(emailInput, errorElement, errorText, 'El email debe tener al menos 3 caracteres antes del @');
-        isEmailValid = false;
-        updateSubmitButton();
-        return;
-    }
-    if (localPart.length > 30) {
-        showError(emailInput, errorElement, errorText, 'El email debe tener máximo 30 caracteres antes del @');
-        isEmailValid = false;
-        updateSubmitButton();
-        return;
-    }
-
-    // 3. No doble punto
-    if (localPart.includes('..')) {
-        showError(emailInput, errorElement, errorText, 'No se permiten dos puntos seguidos');
-        isEmailValid = false;
-        updateSubmitButton();
-        return;
-    }
-
-    // 4. No mismo carácter más de 3 veces
-    const charCount = {};
-    for (let char of localPartLower) {
-        if (char !== '.') {
-            charCount[char] = (charCount[char] || 0) + 1;
-            if (charCount[char] > 3) {
-                showError(emailInput, errorElement, errorText, 'No se permite el mismo carácter más de 3 veces');
+            if (value === '') {
+                showError(emailInput, errorElement, errorText, 'El email es obligatorio');
                 isEmailValid = false;
                 updateSubmitButton();
                 return;
             }
+
+            // 1. Solo @gmail.com
+            if (!value.endsWith('@gmail.com')) {
+                showError(emailInput, errorElement, errorText, 'Solo se aceptan cuentas de Gmail (@gmail.com)');
+                isEmailValid = false;
+                updateSubmitButton();
+                return;
+            }
+
+            const localPart = value.split('@')[0];
+            const localPartLower = localPart.toLowerCase();
+
+            // 2. Longitud antes del @
+            if (localPart.length < 3) {
+                showError(emailInput, errorElement, errorText, 'El email debe tener al menos 3 caracteres antes del @');
+                isEmailValid = false;
+                updateSubmitButton();
+                return;
+            }
+            if (localPart.length > 30) {
+                showError(emailInput, errorElement, errorText, 'El email debe tener máximo 30 caracteres antes del @');
+                isEmailValid = false;
+                updateSubmitButton();
+                return;
+            }
+
+            // 3. No doble punto
+            if (localPart.includes('..')) {
+                showError(emailInput, errorElement, errorText, 'No se permiten dos puntos seguidos');
+                isEmailValid = false;
+                updateSubmitButton();
+                return;
+            }
+
+            // 4. No mismo carácter más de 3 veces
+            const charCount = {};
+            for (let char of localPartLower) {
+                if (char !== '.') {
+                    charCount[char] = (charCount[char] || 0) + 1;
+                    if (charCount[char] > 3) {
+                        showError(emailInput, errorElement, errorText, 'No se permite el mismo carácter más de 3 veces');
+                        isEmailValid = false;
+                        updateSubmitButton();
+                        return;
+                    }
+                }
+            }
+
+            // 5. Caracteres válidos en local part
+            if (!/^[a-zA-Z0-9.]+$/.test(localPart)) {
+                showError(emailInput, errorElement, errorText, 'Solo se permiten letras, números y puntos antes del @');
+                isEmailValid = false;
+                updateSubmitButton();
+                return;
+            }
+
+            // 6. No puede empezar o terminar con punto
+            if (localPart.startsWith('.') || localPart.endsWith('.')) {
+                showError(emailInput, errorElement, errorText, 'El email no puede empezar o terminar con punto');
+                isEmailValid = false;
+                updateSubmitButton();
+                return;
+            }
+
+            // 7. Validaciones para patrones sospechosos
+            if (/(.)\1{2,}/.test(localPartLower)) {
+                showError(emailInput, errorElement, errorText, 'El email contiene caracteres repetidos de forma inusual');
+                isEmailValid = false;
+                updateSubmitButton();
+                return;
+            }
+
+            const secuenciasTeclado = [
+                'qwerty', 'asdfgh', 'zxcvbn', 'poiuyt', 'lkjhgf', 'mnbvcx',
+                'qazwsx', 'edcrfv', 'tgbnhy', 'yhnujm', 'ikmloj', 'plmokn'
+            ];
+            if (secuenciasTeclado.some(seq => localPartLower.includes(seq))) {
+                showError(emailInput, errorElement, errorText, 'El email contiene secuencias de teclado no válidas');
+                isEmailValid = false;
+                updateSubmitButton();
+                return;
+            }
+
+            if (/(.{2,})(?:\1){2,}/.test(localPartLower)) {
+                showError(emailInput, errorElement, errorText, 'El email contiene patrones repetitivos no naturales');
+                isEmailValid = false;
+                updateSubmitButton();
+                return;
+            }
+
+            // Si pasa todas las validaciones
+            showValid(emailInput, validElement);
+            isEmailValid = true;
+            updateSubmitButton();
         }
-    }
-
-    // 5. Caracteres válidos en local part
-    if (!/^[a-zA-Z0-9.]+$/.test(localPart)) {
-        showError(emailInput, errorElement, errorText, 'Solo se permiten letras, números y puntos antes del @');
-        isEmailValid = false;
-        updateSubmitButton();
-        return;
-    }
-
-    // 6. No puede empezar o terminar con punto
-    if (localPart.startsWith('.') || localPart.endsWith('.')) {
-        showError(emailInput, errorElement, errorText, 'El email no puede empezar o terminar con punto');
-        isEmailValid = false;
-        updateSubmitButton();
-        return;
-    }
-
-    // 7. Validaciones para patrones sospechosos
-    if (/(.)\1{2,}/.test(localPartLower)) {
-        showError(emailInput, errorElement, errorText, 'El email contiene caracteres repetidos de forma inusual');
-        isEmailValid = false;
-        updateSubmitButton();
-        return;
-    }
-
-    const secuenciasTeclado = [
-        'qwerty', 'asdfgh', 'zxcvbn', 'poiuyt', 'lkjhgf', 'mnbvcx',
-        'qazwsx', 'edcrfv', 'tgbnhy', 'yhnujm', 'ikmloj', 'plmokn'
-    ];
-    if (secuenciasTeclado.some(seq => localPartLower.includes(seq))) {
-        showError(emailInput, errorElement, errorText, 'El email contiene secuencias de teclado no válidas');
-        isEmailValid = false;
-        updateSubmitButton();
-        return;
-    }
-
-    if (/(.{2,})(?:\1){2,}/.test(localPartLower)) {
-        showError(emailInput, errorElement, errorText, 'El email contiene patrones repetitivos no naturales');
-        isEmailValid = false;
-        updateSubmitButton();
-        return;
-    }
-
-    // Si pasa todas las validaciones
-    showValid(emailInput, validElement);
-    isEmailValid = true;
-    updateSubmitButton();
-}
 
         // Validación de contraseña con requisitos más estrictos
         function validatePassword() {

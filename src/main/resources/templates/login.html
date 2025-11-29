@@ -3,95 +3,258 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión - Ventas App</title>
+    <title>Iniciar Sesión - SportZone</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/css/cyberpunk.css}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+    <link rel="stylesheet" th:href="@{/css/deportivo.css}" />
+    <style>
+        .navbar-brand { font-weight: bold; color: #2E8B57 !important; }
+        .btn-primary { 
+            background-color: #2E8B57; 
+            border-color: #2E8B57; 
+            font-weight: 600;
+        }
+        .btn-primary:hover { 
+            background-color: #228B22; 
+            border-color: #228B22;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(46, 139, 87, 0.3);
+        }
+        .login-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #2E8B57 0%, #228B22 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border: none;
+            overflow: hidden;
+            max-width: 440px;
+            width: 100%;
+        }
+        .login-header {
+            background: linear-gradient(135deg, #2E8B57 0%, #228B22 100%);
+            color: white;
+            padding: 2.5rem 2rem;
+            text-align: center;
+        }
+        .login-body {
+            padding: 2.5rem 2rem;
+        }
+        .logo-icon {
+            background: rgba(255, 255, 255, 0.2);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+        }
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus {
+            border-color: #2E8B57;
+            box-shadow: 0 0 0 0.2rem rgba(46, 139, 87, 0.25);
+        }
+        .input-group-text {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-right: none;
+            border-radius: 12px 0 0 12px;
+        }
+        .input-group .form-control {
+            border-left: none;
+            border-radius: 0 12px 12px 0;
+        }
+        .input-group .form-control:focus {
+            border-left: none;
+        }
+        .password-toggle {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-left: none;
+            border-radius: 0 12px 12px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .password-toggle:hover {
+            background: #e9ecef;
+        }
+        .alert {
+            border-radius: 12px;
+            border: none;
+            padding: 1rem 1.25rem;
+        }
+        .alert-danger {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+            border-left: 4px solid #dc3545;
+        }
+        .alert-success {
+            background: rgba(25, 135, 84, 0.1);
+            color: #198754;
+            border-left: 4px solid #198754;
+        }
+        .btn-outline-primary {
+            border-color: #2E8B57;
+            color: #2E8B57;
+            font-weight: 500;
+        }
+        .btn-outline-primary:hover {
+            background-color: #2E8B57;
+            border-color: #2E8B57;
+            transform: translateY(-1px);
+        }
+        .back-home {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            z-index: 10;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 1.5rem 0;
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .divider::before {
+            margin-right: 1rem;
+        }
+        .divider::after {
+            margin-left: 1rem;
+        }
+        .feature-icon {
+            color: #2E8B57;
+            margin-right: 0.5rem;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <div class="row justify-content-center min-vh-100 align-items-center">
-            <div class="col-md-6 col-lg-4">
-                <div class="card">
-                    <div class="card-body p-5">
+    <div class="login-container">
+        <!-- Botón Volver al Home -->
+        <div class="back-home">
+            <a th:href="@{/}" class="btn btn-outline-light btn-sm">
+                <i class="fas fa-arrow-left me-1"></i> Volver al Inicio
+            </a>
+        </div>
 
-                        <!-- BOTÓN VOLVER AL HOME -->
-                        <div class="text-start mb-4">
-                            <a th:href="@{/}" class="btn btn-outline-primary btn-sm">
-                                <i class="fas fa-arrow-left me-1"></i> Volver al Home
-                            </a>
+        <div class="login-card">
+            <!-- Header -->
+            <div class="login-header">
+                <div class="logo-icon">
+                    <i class="fas fa-dumbbell"></i>
+                </div>
+                <h2 class="fw-bold mb-2">SportZone</h2>
+                <p class="mb-0 opacity-90">Inicia sesión en tu cuenta</p>
+            </div>
+
+            <!-- Body -->
+            <div class="login-body">
+                <!-- Mensajes -->
+                <div th:if="${param.error}" class="alert alert-danger mb-4">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-triangle feature-icon"></i>
+                        <div>
+                            <strong class="d-block">Error de autenticación</strong>
+                            <small class="d-block mt-1">Email o contraseña incorrectos</small>
                         </div>
+                    </div>
+                </div>
 
-                        <div class="text-center mb-4">
-                            <i class="fas fa-laptop-code fa-3x mb-3 logo-glow"></i>
-                            <h2 class="card-title">Ventas App</h2>
-                            <p>Inicia sesión en tu cuenta</p>
+                <div th:if="${param.logout}" class="alert alert-success mb-4">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-check-circle feature-icon"></i>
+                        <div>
+                            <strong class="d-block">Sesión cerrada</strong>
+                            <small class="d-block mt-1">Has cerrado sesión con éxito</small>
                         </div>
+                    </div>
+                </div>
 
-                        <!-- Mensajes -->
-                        <div th:if="${param.error}" class="alert alert-danger">
-                            <i class="fas fa-exclamation-triangle"></i> 
-                            Error en el email o contraseña.
-                        </div>
-
-                        <div th:if="${param.logout}" class="alert alert-success">
-                            <i class="fas fa-check-circle"></i> 
-                            Has cerrado sesión con éxito.
-                        </div>
-
-                        <div th:if="${success}" class="alert alert-success">
-                            <i class="fas fa-check-circle"></i> 
+                <div th:if="${success}" class="alert alert-success mb-4">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-check-circle feature-icon"></i>
+                        <div>
                             <span th:text="${success}"></span>
                         </div>
-
-                        <!-- Formulario -->
-                        <form th:action="@{/login}" method="post">
-                            <div class="mb-3">
-                                <label for="username" class="form-label">Email</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">
-                                        <i class="fas fa-envelope"></i>
-                                    </span>
-                                    <input type="email" class="form-control" id="username" name="username"
-                                           placeholder="tu@email.com" required>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Contraseña</label>
-                                <div class="input-group">
-                                    <span class="input-group-text">
-                                        <i class="fas fa-lock"></i>
-                                    </span>
-                                    <input type="password" class="form-control" id="password" name="password"
-                                           placeholder="Tu contraseña" required>
-                                    <button type="button" class="password-toggle" onclick="togglePassword('password')">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </div>
-                                <div class="form-text text-muted mt-2">
-                                    <small>¿No recuerdas tu contraseña? Contacta con el administrador.</small>
-                                </div>
-                            </div>
-
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-primary btn-lg">
-                                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-                                </button>
-                            </div>
-                        </form>
-
-                        <div class="text-center mt-4">
-                            <p class="mb-0">¿No tienes cuenta?</p>
-                            <a th:href="@{/register}" class="btn btn-sm btn-outline-primary mt-2">
-                                <i class="fas fa-user-plus"></i> Regístrate aquí
-                            </a>
-                        </div>
-                        </div>
-
                     </div>
+                </div>
+
+                <!-- Formulario -->
+                <form th:action="@{/login}" method="post">
+                    <div class="mb-4">
+                        <label for="username" class="form-label">
+                            <i class="fas fa-envelope feature-icon"></i>Email
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-envelope text-muted"></i>
+                            </span>
+                            <input type="email" class="form-control" id="username" name="username"
+                                   placeholder="tu@email.com" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label">
+                            <i class="fas fa-lock feature-icon"></i>Contraseña
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-lock text-muted"></i>
+                            </span>
+                            <input type="password" class="form-control" id="password" name="password"
+                                   placeholder="Tu contraseña" required>
+                            <button type="button" class="btn password-toggle" onclick="togglePassword('password')">
+                                <i class="fas fa-eye text-muted"></i>
+                            </button>
+                        </div>
+                        <div class="form-text text-muted mt-2">
+                            <small>
+                                <i class="fas fa-info-circle feature-icon"></i>
+                                ¿No recuerdas tu contraseña? Contacta con el administrador.
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="d-grid mb-4">
+                        <button type="submit" class="btn btn-primary btn-lg py-2">
+                            <i class="fas fa-sign-in-alt me-2"></i> Iniciar Sesión
+                        </button>
+                    </div>
+                </form>
+
+                <div class="divider">¿No tienes cuenta?</div>
+
+                <div class="text-center">
+                    <a th:href="@{/register}" class="btn btn-outline-primary w-100">
+                        <i class="fas fa-user-plus me-2"></i> Crear Cuenta Nueva
+                    </a>
                 </div>
             </div>
         </div>
@@ -110,6 +273,30 @@
                 toggleIcon.classList.replace('fa-eye-slash', 'fa-eye');
             }
         }
+
+        // Efectos de hover mejorados
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(button => {
+                button.addEventListener('mouseenter', function() {
+                    this.style.transition = 'all 0.3s ease';
+                });
+                button.addEventListener('mouseleave', function() {
+                    this.style.transition = 'all 0.3s ease';
+                });
+            });
+
+            // Focus effects for inputs
+            const inputs = document.querySelectorAll('.form-control');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('focused');
+                });
+                input.addEventListener('blur', function() {
+                    this.parentElement.classList.remove('focused');
+                });
+            });
+        });
     </script>
 </body>
 </html>
