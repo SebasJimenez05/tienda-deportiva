@@ -17,6 +17,7 @@ import com.deportes.tiendadeportiva.services.ProductoService;
 import com.deportes.tiendadeportiva.services.StockService;
 import com.deportes.tiendadeportiva.services.UsuarioService;
 import com.deportes.tiendadeportiva.services.VentaService;
+import com.deportes.tiendadeportiva.services.StatsService;
 
 import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
@@ -43,6 +44,9 @@ public class TiendaController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private StatsService statsService;
 
     @Autowired
     private CarritoService carritoService;
@@ -111,7 +115,9 @@ public class TiendaController {
             model.addAttribute("marcas", marcas);
             model.addAttribute("statsDeportes", statsDeportes);
             model.addAttribute("totalProductos", totalProductos);
-
+            // Agregar stats en tiempo real - SOLO AGREGA ESTAS 2 LÍNEAS
+            Map<String, Object> stats = statsService.getStatsEnTiempoReal();
+            model.addAttribute("stats", stats);
             return "tienda";
 
         } catch (Exception e) {

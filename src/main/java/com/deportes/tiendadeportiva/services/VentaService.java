@@ -9,6 +9,7 @@ import com.deportes.tiendadeportiva.repositories.DetalleVentaRepository;
 import com.deportes.tiendadeportiva.repositories.VentaRepository;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -33,8 +34,14 @@ public class VentaService {
         BigDecimal iva = subtotal.multiply(new BigDecimal("0.19"));
         BigDecimal total = subtotal.add(iva);
 
+        // Generar número de factura secuencial basado en el total de ventas
+        long totalVentas = ventaRepository.count();
+        String numeroFactura = "FACT-DEP-" + String.format("%06d", totalVentas + 1);
+
         // Crear la venta
         Venta venta = new Venta(usuario, subtotal, total);
+        venta.setNumeroFactura(numeroFactura);
+        venta.setFechaVenta(LocalDateTime.now());
         ventaRepository.save(venta);
 
         // Crear detalles de venta y actualizar stock
@@ -50,6 +57,7 @@ public class VentaService {
         return venta;
     }
 
+    // Los demás métodos se mantienen igual...
     public List<Venta> obtenerVentasPorUsuario(Long usuarioId) {
         return ventaRepository.findByUsuarioIdOrderByFechaVentaDesc(usuarioId);
     }

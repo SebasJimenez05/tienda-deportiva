@@ -88,7 +88,7 @@ public class PdfService {
                 .setTextAlignment(TextAlignment.CENTER);
         document.add(direccion);
 
-        Paragraph contacto = new Paragraph("Tel: +57 1 1234567 | Email: info@sportzone.com")
+        Paragraph contacto = new Paragraph("Telefono: +57 3223387878 | Email: info@sportzone.com")
                 .setFont(font)
                 .setFontSize(9)
                 .setTextAlignment(TextAlignment.CENTER);
