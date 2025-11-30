@@ -228,7 +228,7 @@
                                 <i class="fas fa-user text-muted"></i>
                             </span>
                             <input type="text" class="form-control" id="nombre" name="nombre" 
-                                   placeholder="Ej: Juan Pérez" required
+                                   placeholder="Nombre" required
                                    pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]{3,50}$"
                                    oninput="validateNombre()">
                         </div>
@@ -260,7 +260,7 @@
                                 <i class="fas fa-envelope text-muted"></i>
                             </span>
                             <input type="email" class="form-control" id="email" name="email" 
-                                   placeholder="tucorreo@gmail.com" required
+                                   placeholder="Correo" required
                                    oninput="validateEmail()">
                         </div>
                         <div class="valid-feedback" id="emailValid">
@@ -288,7 +288,7 @@
                                 <i class="fas fa-lock text-muted"></i>
                             </span>
                             <input type="password" class="form-control" id="password" name="password" 
-                                   placeholder="Mínimo 8 caracteres" minlength="8" required
+                                   placeholder="Contraseña" minlength="8" required
                                    oninput="validatePassword()">
                             <button type="button" class="btn password-toggle" onclick="togglePassword('password')">
                                 <i class="fas fa-eye text-muted"></i>
